@@ -39,7 +39,7 @@ export default tseslint.config(
       // Your custom rules
       "@typescript-eslint/no-unused-vars": [
         "warn",
-        { argsIgnorePattern: "^_" }
+        { argsIgnorePattern: "^_" },
       ],
 
       "no-console": "warn",
@@ -51,12 +51,6 @@ export default tseslint.config(
 
   // Ignore files
   {
-    ignores: [
-      "node_modules",
-      "dist",
-      ".vscode",
-      "*.config.js",
-      "*.config.ts"
-    ],
+    ignores: ["node_modules", "dist", ".vscode", "*.config.js", "*.config.ts"],
   }
 );
