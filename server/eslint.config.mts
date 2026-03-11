@@ -5,39 +5,58 @@ import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 
 export default tseslint.config(
-  // 1. Recommended JS & TS configs
+  // Base JS rules
   js.configs.recommended,
+
+  // TypeScript recommended rules
   ...tseslint.configs.recommended,
 
-  // 2. Custom configuration for your files
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+
     plugins: {
       prettier: prettierPlugin,
     },
+
     languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node, // Added Node since it's a Node project
+      parser: tseslint.parser,
+
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
       },
-      parser: tseslint.parser, // Use the correct TS parser
-      sourceType: "module",
+
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
     },
+
     rules: {
-      // Disable rules that conflict with Prettier
+      // Disable conflicting rules with prettier
       ...prettierConfig.rules,
-      
+
       // Your custom rules
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_" }
+      ],
+
       "no-console": "warn",
-      
-      // Let Prettier handle formatting as an ESLint rule
+
+      // Prettier rule
       "prettier/prettier": "error",
     },
   },
-  
-  // 3. Ignore build artifacts
+
+  // Ignore files
   {
-    ignores: ["dist/", "node_modules/"],
+    ignores: [
+      "node_modules",
+      "dist",
+      ".vscode",
+      "*.config.js",
+      "*.config.ts"
+    ],
   }
 );
