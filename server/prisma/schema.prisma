@@ -6,3 +6,114 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+enum Provider {
+  GOOGLE
+  GITHUB
+}
+
+enum Platfrom {
+  wellfound
+  naukri
+  linkedin
+  yc
+  instaHyre
+}
+
+enum JobType {
+  remote
+  hybrid
+  onsite
+}
+
+model User {
+  id        String       @id @default(uuid())
+  username  String
+  email     String      @unique
+  provider  Provider
+  providerUserId String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  bookmarks       BookmarkFolder[]
+  applied         Applied[]
+
+  @@unique([provider, providerUserId])
+}
+
+enum ScraperStatus {
+  running
+  completed 
+  failed
+}
+
+model JobPostings {
+  id            String    @id @default(uuid())
+  platfrom      Platfrom
+  role          String
+  experienceRequired  Int
+  location      String[]
+  jobType       JobType
+  publishedDate  DateTime
+  jobUrl        String   @unique
+  rawData       RawJobData?
+
+  bookmarkItems  BookmarkItems[]
+  applied         Applied[]
+}
+
+model RawJobData {
+  id            String    @id @default(uuid())
+  jobPostingId  String    @unique
+  jobPosting    JobPostings @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  rawData        Json
+  scrapedAt     DateTime    @default(now())
+}
+
+model BookmarkFolder {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  name          String
+  isPublic      Boolean
+  sharableLink  String
+  createdAt     DateTime   @default(now())
+
+  bookmarkItems  BookmarkItems[]
+
+  @@unique([userId, name])
+}
+
+model BookmarkItems {
+  id            String    @id @default(uuid())
+  folderId      String
+  folder        BookmarkFolder @relation(fields: [folderId], references: [id])
+  jobPostingId String
+  jobPosting    JobPostings     @relation(fields: [jobPostingId], references: [id])
+  createdAt     DateTime   @default(now())
+  
+  @@unique([folderId, jobPostingId])
+}
+
+model Applied {
+  id            String    @id @default(uuid())
+  userId         String
+  user            User   @relation(fields: [userId], references: [id])
+  jobPostingId  String
+  jobPosting    JobPostings  @relation(fields: [jobPostingId], references: [id])
+  createdAt    DateTime     @default(now())
+
+  @@unique([jobPostingId, userId])
+}
+
+model ScraperRuns {
+  id            String    @id @default(uuid())
+  platfrom      Platfrom
+  status        ScraperStatus
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
+  jobsfound     Int
+  jobsInserted  Int
+  errorMessage  String?
+}
