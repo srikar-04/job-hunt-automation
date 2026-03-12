@@ -3,6 +3,7 @@ import { z } from "zod";
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1, "database url is required"),
   FRONTEND_URL: z.string().min(1, "frontend url is required"),
+  CORS_ORIGIN: z.string().min(1, "cors origin is required"),
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
