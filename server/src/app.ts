@@ -12,6 +12,7 @@ import helmet from "helmet";
 import { env } from "./config/env.schema.js";
 import cors from "cors";
 import { urlencoded } from "express";
+import { authConfig } from "./config/auth.config.js";
 
 const app = express();
 
@@ -55,7 +56,7 @@ app.use(express.json({ limit: "10kb" }));
 app.use(urlencoded({ extended: true, limit: "10kb" }));
 
 app.set("trust proxy", true);
-app.use("/auth/*", ExpressAuth({ providers: [GitHub, Google] }));
+app.use("/auth/*", ExpressAuth(authConfig));
 
 app.get("/", (_req: Request, res: Response) => {
   res.send("in base route /");
