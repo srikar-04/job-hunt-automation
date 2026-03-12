@@ -1,7 +1,8 @@
 import app from "./app.js";
+import { env } from "./config/env.schema.js";
 import { prisma } from "./lib/prisma.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = env.PORT;
 
 async function startServer() {
   try {

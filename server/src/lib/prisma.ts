@@ -1,10 +1,8 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client.js";
+import { env } from "../config/env.schema.js";
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = env.DATABASE_URL;
 
 if (!connectionString) {
   throw new Error("db connection string not found");
